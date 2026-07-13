@@ -1,5 +1,5 @@
 const Product = require("../models/Product")
-const cloudinary = require("../config/cloudinary");
+const cloudinary = require("../config/Cloudinary");
 const streamifier = require("streamifier");
 
 const uploadImage = (file) => {
