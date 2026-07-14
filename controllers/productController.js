@@ -22,19 +22,10 @@ const uploadImage = (file) => {
 };
 
 const createProduct = async (req, res) => {
-    console.log("Body:", req.body);
-    console.log("Files:", req.files);
     try {
         const {
             name, category, price, description, images, stock, unit
         } = req.body
-
-        // if (!name || !category || !price) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "Name, category and price required"
-        //     })
-        // }
 
         let imageUrls = [];
 

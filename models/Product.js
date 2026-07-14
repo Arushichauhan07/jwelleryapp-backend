@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema(
         },
         category:{
             type:String,
-            enum:["Earrings", "Necklace", "Pendants", "Anklets", "Rings", "Bangles"],
+            enum:["Earrings", "Necklace", "Pendants", "Anklets", "Rings", "Bangles", "Bracelets"],
             required:true
         },
         price:{

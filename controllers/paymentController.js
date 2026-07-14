@@ -21,18 +21,13 @@ const createPayment = async (req, res) => {
             },
         };
 
-        console.log("options", options)
-
         const order = await razorpay.orders.create(options);
-
-        console.log("order", order)
 
         return res.status(200).json({
             success: true,
             order,
         });
     } catch (error) {
-        console.error(error);
 
         return res.status(500).json({
             success: false,

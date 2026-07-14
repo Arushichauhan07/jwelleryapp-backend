@@ -29,8 +29,6 @@ const isAuthenticated = (req, res, next) => {
 
     } catch (error) {
 
-        console.log(error);
-
         error.message = "Invalid token";
         error.statusCode = 401; 
         
