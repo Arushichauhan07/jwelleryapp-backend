@@ -296,6 +296,75 @@ const addToCartProduct = async (req, res) => {
     }
 };
 
+const removeItemFromCart = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        const user = await User.findById(req.user.id);
+
+        const item = user.cart.find(
+            (item) => item.product.toString() === productId
+        );
+
+        if (!item) {
+            return res.status(404).json({
+                success: false,
+                message: "Item not found in cart",
+            });
+        }
+
+        if (item.quantity > 1) {
+            item.quantity -= 1;
+        } else {
+            user.cart = user.cart.filter(
+                (item) => item.product.toString() !== productId
+            );
+        }
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Cart updated successfully",
+            cart: user.cart,
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
+const removeEntireItemFromCart = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        const user = await User.findById(req.user.id);
+
+        user.cart = user.cart.filter(
+            (item) => item.product.toString() !== productId
+        );
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Item removed from cart",
+            cart: user.cart,
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
 
 
-module.exports = { googleAuth, createUser, loginUser, fetchUserDetails, wishListProducts, addToCartProduct }
+
+module.exports = { googleAuth, createUser, loginUser, fetchUserDetails, wishListProducts, addToCartProduct, removeItemFromCart, removeEntireItemFromCart }
