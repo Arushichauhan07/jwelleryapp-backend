@@ -84,7 +84,6 @@ const googleAuth = async (req, res) => {
     }
 };
 
-
 const createUser = async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
@@ -202,6 +201,62 @@ const loginUser = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error in login user",
+            error: error.message
+        })
+    }
+}
+
+const editUserProfile = async (req, res) => {
+    try {
+        const { address, phone } = req.body
+
+        if (!address || !phone) {
+            return res.status(404).json({
+                success: false,
+                message: "Address or phone number not provided",
+            });
+        }
+
+        if (!/^\d{10}$/.test(phone)) {
+            return res.status(400).json({
+                success: false,
+                message: "Phone number must be exactly 10 digits.",
+            });
+        }
+
+        const userId = req.user.id;
+
+        if (!userId) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        user.address = address
+
+        user.phone = phone
+
+        user.save()
+
+        return res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error in editing user details",
             error: error.message
         })
     }
@@ -365,6 +420,51 @@ const removeEntireItemFromCart = async (req, res) => {
     }
 };
 
+const moveWishlistItemsToCart = async (req, res) => {
+    console.log("here")
+    try {
+        const user = await User.findById(req.user.id)
+
+        console.log("user", user)
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        for (const productId of user.wishlist) {
+            const existingItem = user.cart.find(
+                (item) => item.product.toString() === productId.toString()
+            );
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                user.cart.push({
+                    product: productId,
+                    quantity: 1,
+                });
+            }
+        }
+
+        user.wishlist = [];
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Items moved to cart successfully"
+        })
+    } catch (error) {
+        console.log("error", error)
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+}
 
 
-module.exports = { googleAuth, createUser, loginUser, fetchUserDetails, wishListProducts, addToCartProduct, removeItemFromCart, removeEntireItemFromCart }
+
+module.exports = { googleAuth, createUser, loginUser, fetchUserDetails, editUserProfile, wishListProducts, addToCartProduct, removeItemFromCart, removeEntireItemFromCart, moveWishlistItemsToCart }

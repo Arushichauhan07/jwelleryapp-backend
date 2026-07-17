@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
         unique: true,
         index: true
     },
+    address: {
+        type: String
+    },
     phone: {
         type: Number,
         // required: true,
@@ -27,6 +30,10 @@ const userSchema = new mongoose.Schema({
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
+    }],
+    orders: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order"
     }],
     cart: [{
         product: {
